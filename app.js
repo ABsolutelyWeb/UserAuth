@@ -9,6 +9,8 @@ app.use(require("express-session")({
 
 
 var bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 var User = require("./models/user");
 
 
@@ -21,9 +23,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 // Read sesion, take data from session, unencode data
 // from session.
+passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 
 
 var mongoose = require("mongoose");
@@ -33,7 +35,7 @@ app.set("view engine", "ejs");
 
 
 
-
+////////////////////////////// ROUTES ////////////////////////////// 
 
 
 app.get("/", function(req, res){
@@ -46,10 +48,43 @@ app.get("/secret", function(req, res) {
 });
 
 
+// AUTH routes
+
+// Show sign-up form
+app.get("/register", function(req, res) {
+   res.render("register") ;
+});
 
 
+// Handle sign-ups
+app.post("/register", function(req, res){
+    User.register(new User({username: req.body.username}), req.body.password, function(err, user){
+        if (err) {
+            console.log(err);
+            return res.render("register");
+        } else {
+            passport.authenticate("local")(req, res, function(){
+               res.redirect("/secret") ;
+            });
+        };
+    });
+});
 
 
+// LOGIN ROUTES
+
+// render login form
+app.get("/login", function(req, res) {
+   res.render("login");
+});
+
+// login logic
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/secret",
+    failureRedirect: "/login"
+}), function(req, res){
+    
+});
 
 
 
