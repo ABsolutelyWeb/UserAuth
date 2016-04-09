@@ -1,0 +1,13 @@
+npm init
+npm install express --save
+npm install mongoose --save
+npm install passport --save
+npm install passport-local --save
+npm install passport-local-mongoose --save
+npm install body-parser --save
+npm install ejs --save
+npm install express session --save
+
+OR
+
+npm install express mongoose ejs body-parser express-session passport passport-local passport-local-mongoose --save
